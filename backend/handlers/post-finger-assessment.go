@@ -96,7 +96,7 @@ func PostFingerAssessment(w http.ResponseWriter, r *http.Request) {
 	newAssessmentResponse := commitNewAssessmentJSON(r, filePath)
 
 	if newAssessmentResponse.err != nil {
-		returnHttpError(w, fmt.Sprintf("%s %s", newAssessmentResponse.message, newAssessmentResponse.err.Error()), newAssessmentResponse.status)
+		returnHttpError(w, newAssessmentResponse.message, newAssessmentResponse.status)
 		return
 	}
 
@@ -107,7 +107,8 @@ func PostFingerAssessment(w http.ResponseWriter, r *http.Request) {
   
 
 	if newUsersResponse.err != nil {
-		returnHttpError(w, fmt.Sprintf("%s %s", newUsersResponse.message, newUsersResponse.err.Error()), newUsersResponse.status)
+		returnHttpError(w, newUsersResponse.message, newUsersResponse.status)
+		return
 	}
 
 	fmt.Println(newUsersResponse.message)
