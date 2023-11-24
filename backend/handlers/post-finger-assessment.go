@@ -60,6 +60,8 @@ func commitNewUsersJSON(date string, id string, filePath string) commitResponse 
 
 	if readResp.Status == http.StatusOK {
 		json.Unmarshal([]byte(readResp.Content), &users)
+	} else {
+		users = make(map[string]interface{})
 	}
 
 	if users[id] == nil {
