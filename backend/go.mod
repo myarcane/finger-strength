@@ -1,4 +1,4 @@
-module hx711-service
+module github.com/myarcane/finger-strength
 
 go 1.19
 

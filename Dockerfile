@@ -42,9 +42,10 @@ RUN npm run build
 
 # Install GO hx711 service
 COPY backend/*.go ./
+COPY backend/utils/*.go ./utils/
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
-RUN go build -o main .
+RUN go build -o main ./
 
 # Install lgpio C++ dependency
 RUN wget http://abyz.me.uk/lg/lg.zip && \
