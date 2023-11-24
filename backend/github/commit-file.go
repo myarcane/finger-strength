@@ -58,6 +58,7 @@ func CommitFile(token, owner, repo, branch, filePath, commitMessage, fileContent
 		}
 		defer resp.Body.Close()
 
+		fmt.Println("resp status:", resp.StatusCode)
 		if resp.StatusCode != http.StatusOK {
 			return fmt.Errorf("request failed with status code %d", resp.StatusCode)
 		}
