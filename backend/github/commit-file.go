@@ -68,8 +68,6 @@ func CommitFile(token, owner, repo, branch, filePath, commitMessage, fileContent
 		if err != nil {
 			return err
 		}
-
-		fmt.Println("resp status:", resp.StatusCode)
 	
 		// Parse the response
 		var response CreateFileResponse

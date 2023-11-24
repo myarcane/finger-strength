@@ -51,14 +51,17 @@ func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 
 // Commits the muted users JSON file
 func commitNewUsersJSON(date string, id string, filePath string) commitResponse {
-	body, sha, err := github.ReadFile(github.Owner,github.Repo, "data/users.json")
+	readResp := github.ReadFile(github.Owner,github.Repo, "data/users.json")
 
-	if err != nil {
+	if readResp.Err != nil && readResp.Status != http.StatusNotFound {
 		return commitResponse{userId: "", message: fmt.Sprintf("Error while reading github users file: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
 	}
 	
 	var users map[string]interface{}
-	json.Unmarshal([]byte(body), &users)
+
+	if (readResp.Status == http.StatusOK) {
+		json.Unmarshal([]byte(readResp.Content), &users)
+	}
 
 	if (users[id] == nil) {
 		users[id] = []interface{}{map[string]string{"date": date, "assessment": filePath},}
@@ -72,7 +75,7 @@ func commitNewUsersJSON(date string, id string, filePath string) commitResponse 
        return commitResponse{userId: "", message: fmt.Sprintf("Error marshalling users JSON: %s", err.Error()), status: http.StatusInternalServerError, err: err}
     }
 
-	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, "data/users.json", "Update users JSON", string(newUsersJson), sha)
+	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, "data/users.json", "Update users JSON", string(newUsersJson), readResp.Sha)
 
 	if err != nil {
 		return commitResponse{userId: "", message: fmt.Sprintf("Error commiting users JSON: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
@@ -114,6 +117,6 @@ func PostFingerAssessment(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(newUsersResponse.message)
 
 	// Send a response
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("POST request received successfully"))
 }

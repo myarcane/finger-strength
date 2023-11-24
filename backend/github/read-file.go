@@ -9,41 +9,49 @@ import (
 )
 
 
-type FileResponse struct {
+type fileResponse struct {
 	Content string `json:"content"`
 	SHA     string `json:"sha"`
 }
 
-func ReadFile(owner, repo, path string) (string, string, error) {
+type ReadResponse struct {
+	Content string
+	Sha    string
+	Err	error
+	Status int
+}
+
+
+func ReadFile(owner, repo, path string) ReadResponse {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", "", err
+		return ReadResponse{Content: "", Sha: "", Err: err, Status: resp.StatusCode}
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", "", fmt.Errorf("request failed with status code %d", resp.StatusCode)
+		return ReadResponse{Content: "", Sha: "", Err: fmt.Errorf("request failed with status code %d", resp.StatusCode), Status: resp.StatusCode}
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", err
+		return ReadResponse{Content: "", Sha: "", Err: err, Status: resp.StatusCode}
 	}
 
-	var fileResp FileResponse
+	var fileResp fileResponse
 	err = json.Unmarshal(body, &fileResp)
 	if err != nil {
-		return "", "", err
+		return ReadResponse{Content: "", Sha: "", Err: err, Status: resp.StatusCode}
 	}
 
 	// Decode the base64-encoded content
 	content, err := base64.StdEncoding.DecodeString(fileResp.Content)
 	if err != nil {
-		return "", "", err
+		return ReadResponse{Content: "", Sha: "", Err: err, Status: resp.StatusCode}
 	}
 
-	return string(content), fileResp.SHA, nil
+	return ReadResponse{Content:string(content) , Sha: fileResp.SHA, Err: nil, Status: resp.StatusCode}
 }
 
