@@ -53,7 +53,7 @@ func CommitFile(token, owner, repo, branch, filePath, commitMessage, fileContent
 	
 		// Send the request
 		resp, err := client.Do(req)
-		if err != nil {
+		if err != nil || resp.StatusCode != http.StatusOK {
 			return err
 		}
 		defer resp.Body.Close()

@@ -9,6 +9,11 @@ import (
 )
 
 
+type FileResponse struct {
+	Content string `json:"content"`
+	SHA     string `json:"sha"`
+}
+
 func ReadFile(owner, repo, path string) (string, string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
 
@@ -25,11 +30,6 @@ func ReadFile(owner, repo, path string) (string, string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", "", err
-	}
-
-	type FileResponse struct {
-		Content string `json:"content"`
-		SHA     string `json:"sha"`
 	}
 
 	var fileResp FileResponse
