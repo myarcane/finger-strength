@@ -11,8 +11,8 @@ import (
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("./dist")))
 
-	http.HandleFunc("api/ws", handlers.GetLoadCellOutput)
-	http.HandleFunc("api/post-finger-assessment", handlers.PostFingerAssessment)
+	http.HandleFunc("/api/ws", handlers.GetLoadCellOutput)
+	http.HandleFunc("/api/post-finger-assessment", handlers.PostFingerAssessment)
 
 	log.Println("Listening on :8000")
 	err := http.ListenAndServe(":8000", nil)
