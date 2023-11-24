@@ -14,6 +14,12 @@ type FileResponse struct {
 	SHA     string `json:"sha"`
 }
 
+type customError struct{}
+
+func (m *customError) Error() string {
+	return "status code not OK"
+}
+
 func ReadFile(owner, repo, path string) (string, string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
 
@@ -24,7 +30,7 @@ func ReadFile(owner, repo, path string) (string, string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", "", fmt.Errorf("request failed with status code %d", resp.StatusCode)
+		return "", "", &customError{}
 	}
 
 	body, err := io.ReadAll(resp.Body)
