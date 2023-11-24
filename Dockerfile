@@ -10,10 +10,6 @@ RUN apt-get update && apt-get install -y \
 # replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN echo $GITHUB_TOKEN
-
-ENV GITHUB_TOKEN=$GITHUB_TOKEN
-
 # nvm environment variables
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 16.12.0
