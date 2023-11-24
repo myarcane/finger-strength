@@ -42,7 +42,9 @@ RUN npm run build
 
 # Install GO hx711 service
 COPY backend/*.go ./
-COPY backend/utils/*.go ./utils/
+COPY backend/github/*.go ./github/
+COPY backend/handlers/*.go ./handlers/
+COPY backend/models/*.go ./models/
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 RUN go build -o main ./

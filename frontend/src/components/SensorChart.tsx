@@ -62,7 +62,7 @@ export const SensorChart = ({
     };
 
     return () => {
-      console.log("Cleaning up! ");
+      console.log("Cleaning up!");
       ws.current?.close();
     };
   }, []);
