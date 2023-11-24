@@ -67,7 +67,7 @@ func commitNewUsersJSON(date string, id string, filePath string) commitResponse 
 	if users[id] == nil {
 		users[id] = []interface{}{map[string]string{"date": date, "assessment": filePath}}
 	} else {
-		users[id] = append(users[id].([]interface{}), map[string]string{"date": id, "assessment": filePath})
+		users[id] = append(users[id].([]interface{}), map[string]string{"date": date, "assessment": filePath})
 	}
 
 	newUsersJson, err := json.Marshal(users)
