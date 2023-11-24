@@ -20,7 +20,7 @@ var cmd *exec.Cmd
 
 func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	log.Println("cmd to response")
-	
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -39,7 +39,7 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
-    killCmd()
+	killCmd()
 
 	log.Println("exec ./prog command")
 	cmd = exec.Command("./prog")

@@ -8,7 +8,6 @@ import (
 	"net/http"
 )
 
-
 type fileResponse struct {
 	Content string `json:"content"`
 	SHA     string `json:"sha"`
@@ -16,11 +15,10 @@ type fileResponse struct {
 
 type ReadResponse struct {
 	Content string
-	Sha    string
-	Err	error
-	Status int
+	Sha     string
+	Err     error
+	Status  int
 }
-
 
 func ReadFile(owner, repo, path string) ReadResponse {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path)
@@ -52,6 +50,5 @@ func ReadFile(owner, repo, path string) ReadResponse {
 		return ReadResponse{Content: "", Sha: "", Err: err, Status: resp.StatusCode}
 	}
 
-	return ReadResponse{Content:string(content) , Sha: fileResp.SHA, Err: nil, Status: resp.StatusCode}
+	return ReadResponse{Content: string(content), Sha: fileResp.SHA, Err: nil, Status: resp.StatusCode}
 }
-

@@ -10,12 +10,11 @@ import (
 	"github.com/myarcane/finger-strength/models"
 )
 
-
 type commitResponse = struct {
-userId string
-message string
-status int
-err error
+	userId  string
+	message string
+	status  int
+	err     error
 }
 
 func returnHttpError(w http.ResponseWriter, err string, status int) {
@@ -32,18 +31,18 @@ func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 		return commitResponse{userId: "", message: "Error decoding paylod assessment", status: http.StatusBadRequest, err: err}
 	}
 
-	payloadString, err := json.Marshal(payload)	
+	payloadString, err := json.Marshal(payload)
 
 	if err != nil {
 		return commitResponse{userId: "", message: "Error marshalling paylod assessment", status: http.StatusInternalServerError, err: err}
-    }
+	}
 
 	commitMessage := fmt.Sprintf("Commit finger strength assessment %s", filePath)
 
 	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, filePath, commitMessage, string(payloadString), "")
 
 	if err != nil {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error commiting assessment on github: %s",err.Error()), status: http.StatusServiceUnavailable, err: err}
+		return commitResponse{userId: "", message: fmt.Sprintf("Error commiting assessment on github: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
 	}
 
 	return commitResponse{userId: payload.User, message: fmt.Sprintf("Success commiting assessment on github for user: %s", payload.User), status: http.StatusOK, err: nil}
@@ -51,29 +50,29 @@ func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 
 // Commits the muted users JSON file
 func commitNewUsersJSON(date string, id string, filePath string) commitResponse {
-	readResp := github.ReadFile(github.Owner,github.Repo, "data/users.json")
+	readResp := github.ReadFile(github.Owner, github.Repo, "data/users.json")
 
 	if readResp.Err != nil && readResp.Status != http.StatusNotFound {
 		return commitResponse{userId: "", message: fmt.Sprintf("Error while reading github users file: %s", readResp.Err.Error()), status: http.StatusServiceUnavailable, err: readResp.Err}
 	}
-	
+
 	var users map[string]interface{}
 
-	if (readResp.Status == http.StatusOK) {
+	if readResp.Status == http.StatusOK {
 		json.Unmarshal([]byte(readResp.Content), &users)
 	}
 
-	if (users[id] == nil) {
-		users[id] = []interface{}{map[string]string{"date": date, "assessment": filePath},}
+	if users[id] == nil {
+		users[id] = []interface{}{map[string]string{"date": date, "assessment": filePath}}
 	} else {
 		users[id] = append(users[id].([]interface{}), map[string]string{"date": id, "assessment": filePath})
 	}
-     
+
 	newUsersJson, err := json.Marshal(users)
 
 	if err != nil {
-       return commitResponse{userId: "", message: fmt.Sprintf("Error marshalling users JSON: %s", err.Error()), status: http.StatusInternalServerError, err: err}
-    }
+		return commitResponse{userId: "", message: fmt.Sprintf("Error marshalling users JSON: %s", err.Error()), status: http.StatusInternalServerError, err: err}
+	}
 
 	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, "data/users.json", "Update users JSON", string(newUsersJson), readResp.Sha)
 
@@ -107,7 +106,6 @@ func PostFingerAssessment(w http.ResponseWriter, r *http.Request) {
 
 	// Commiting users JSON file
 	newUsersResponse := commitNewUsersJSON(iso8601Time, newAssessmentResponse.userId, filePath)
-  
 
 	if newUsersResponse.err != nil {
 		returnHttpError(w, newUsersResponse.message, newUsersResponse.status)
