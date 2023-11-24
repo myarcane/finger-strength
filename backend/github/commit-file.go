@@ -21,12 +21,6 @@ type CreateFileResponse struct {
 	} `json:"commit"`
 }
 
-type customError struct{}
-
-func (m *customError) Error() string {
-	return "status code not OK"
-}
-
 func CommitFile(token, owner, repo, branch, filePath, commitMessage, fileContent, sha string) error {
 		// Create the API request URL
 		url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, filePath)
@@ -65,7 +59,7 @@ func CommitFile(token, owner, repo, branch, filePath, commitMessage, fileContent
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return &customError{}
+			return fmt.Errorf("request failed with status code %d", resp.StatusCode)
 		}
 		
 		// Read the response body

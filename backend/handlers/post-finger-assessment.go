@@ -29,13 +29,13 @@ func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 
 	if err != nil {
-		return commitResponse{userId: "", message: "Error decoding paylod assessment:", status: http.StatusBadRequest, err: err}
+		return commitResponse{userId: "", message: "Error decoding paylod assessment", status: http.StatusBadRequest, err: err}
 	}
 
 	payloadString, err := json.Marshal(payload)	
 
 	if err != nil {
-		return commitResponse{userId: "", message: "Error marshalling paylod assessment:", status: http.StatusInternalServerError, err: err}
+		return commitResponse{userId: "", message: "Error marshalling paylod assessment", status: http.StatusInternalServerError, err: err}
     }
 
 	commitMessage := fmt.Sprintf("Commit finger strength assessment %s", filePath)
@@ -43,7 +43,7 @@ func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, filePath, commitMessage, string(payloadString), "")
 
 	if err != nil {
-		return commitResponse{userId: "", message: "Error commiting assessment on github:", status: http.StatusServiceUnavailable, err: err}
+		return commitResponse{userId: "", message: "Error commiting assessment on github", status: http.StatusServiceUnavailable, err: err}
 	}
 
 	return commitResponse{userId: payload.User, message: fmt.Sprintf("Success commiting assessment on github for user: %s", payload.User), status: http.StatusOK, err: nil}
