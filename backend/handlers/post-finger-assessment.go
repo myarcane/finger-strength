@@ -54,7 +54,7 @@ func commitNewUsersJSON(date string, id string, filePath string) commitResponse 
 	readResp := github.ReadFile(github.Owner,github.Repo, "data/users.json")
 
 	if readResp.Err != nil && readResp.Status != http.StatusNotFound {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error while reading github users file: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
+		return commitResponse{userId: "", message: fmt.Sprintf("Error while reading github users file: %s", readResp.Err.Error()), status: http.StatusServiceUnavailable, err: readResp.Err}
 	}
 	
 	var users map[string]interface{}
