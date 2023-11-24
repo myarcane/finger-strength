@@ -33,12 +33,12 @@ export const SensorChart = ({
       ? window.location.host
       : "192.168.1.86:8000";
 
-    ws.current = new ReconnectingWebSocket(`ws://${host}/ws`);
+    ws.current = new ReconnectingWebSocket(`ws://${host}/api/ws`);
 
     ws.current.onmessage = (e: MessageEvent) => {
       console.log("message event", e.data);
       const weight = Math.round(
-        parseFloat((e.data as string).replace("lb", "").trim())
+        parseFloat((e.data as string).replace("kg", "").trim())
       );
 
       if (weight > 0) {
