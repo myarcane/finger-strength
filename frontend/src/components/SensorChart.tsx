@@ -31,7 +31,7 @@ export const SensorChart = ({
     //Send request to our websocket server using the "/request" path
     const host = import.meta.env.PROD
       ? window.location.host
-      : "192.168.1.86:8000";
+      : "192.168.0.22:8000";
 
     ws.current = new ReconnectingWebSocket(`ws://${host}/api/ws`);
 
