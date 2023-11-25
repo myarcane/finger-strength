@@ -10,50 +10,43 @@ import (
 	"github.com/myarcane/finger-strength/models"
 )
 
-type commitResponse = struct {
-	userId  string
-	message string
-	status  int
-	err     error
+type commitResponse struct {
+	UserID  string
+	Message string
+	Status  int
+	Err     error
 }
 
-func returnHttpError(w http.ResponseWriter, err string, status int) {
+func returnHTTPError(w http.ResponseWriter, err string, status int) {
 	fmt.Println(err)
 	http.Error(w, err, status)
 }
 
-// Commits a new assessment JSON file
 func commitNewAssessmentJSON(r *http.Request, filePath string) commitResponse {
 	var payload models.FingerAssessment
-	err := json.NewDecoder(r.Body).Decode(&payload)
-
-	if err != nil {
-		return commitResponse{userId: "", message: "Error decoding paylod assessment", status: http.StatusBadRequest, err: err}
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		return commitResponse{UserID: "", Message: "Error decoding payload assessment", Status: http.StatusBadRequest, Err: err}
 	}
 
 	payloadString, err := json.Marshal(payload)
-
 	if err != nil {
-		return commitResponse{userId: "", message: "Error marshalling paylod assessment", status: http.StatusInternalServerError, err: err}
+		return commitResponse{UserID: "", Message: "Error marshalling payload assessment", Status: http.StatusInternalServerError, Err: err}
 	}
 
 	commitMessage := fmt.Sprintf("Commit finger strength assessment %s", filePath)
 
-	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, filePath, commitMessage, string(payloadString), "")
-
-	if err != nil {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error commiting assessment on github: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
+	if err := github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, filePath, commitMessage, string(payloadString), ""); err != nil {
+		return commitResponse{UserID: "", Message: fmt.Sprintf("Error committing assessment on GitHub: %s", err.Error()), Status: http.StatusServiceUnavailable, Err: err}
 	}
 
-	return commitResponse{userId: payload.User, message: fmt.Sprintf("Success commiting assessment on github for user: %s", payload.User), status: http.StatusOK, err: nil}
+	return commitResponse{UserID: payload.User, Message: fmt.Sprintf("Success committing assessment on GitHub for user: %s", payload.User), Status: http.StatusOK, Err: nil}
 }
 
-// Commits the muted users JSON file
-func commitNewUsersJSON(date string, id string, filePath string) commitResponse {
+func commitNewUsersJSON(date, id, filePath string) commitResponse {
 	readResp := github.ReadFile(github.Owner, github.Repo, "data/users.json")
 
 	if readResp.Err != nil && readResp.Status != http.StatusNotFound {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error while reading github users file: %s", readResp.Err.Error()), status: http.StatusServiceUnavailable, err: readResp.Err}
+		return commitResponse{UserID: "", Message: fmt.Sprintf("Error reading GitHub users file: %s", readResp.Err.Error()), Status: http.StatusServiceUnavailable, Err: readResp.Err}
 	}
 
 	var users map[string]interface{}
@@ -70,53 +63,48 @@ func commitNewUsersJSON(date string, id string, filePath string) commitResponse 
 		users[id] = append(users[id].([]interface{}), map[string]string{"date": date, "assessment": filePath})
 	}
 
-	newUsersJson, err := json.Marshal(users)
+	newUsersJSON, err := json.Marshal(users)
 
 	if err != nil {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error marshalling users JSON: %s", err.Error()), status: http.StatusInternalServerError, err: err}
+		return commitResponse{UserID: "", Message: fmt.Sprintf("Error marshalling users JSON: %s", err.Error()), Status: http.StatusInternalServerError, Err: err}
 	}
 
-	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, "data/users.json", "Update users JSON", string(newUsersJson), readResp.Sha)
+	err = github.CommitFile(github.Token, github.Owner, github.Repo, github.Branch, "data/users.json", "Update users JSON", string(newUsersJSON), readResp.Sha)
 
 	if err != nil {
-		return commitResponse{userId: "", message: fmt.Sprintf("Error commiting users JSON: %s", err.Error()), status: http.StatusServiceUnavailable, err: err}
+		return commitResponse{UserID: "", Message: fmt.Sprintf("Error committing users JSON: %s", err.Error()), Status: http.StatusServiceUnavailable, Err: err}
 	}
 
-	return commitResponse{userId: id, message: fmt.Sprintf("Success commiting users JSON for user: %s", id), status: http.StatusOK, err: nil}
+	return commitResponse{UserID: id, Message: fmt.Sprintf("Success committing users JSON for user: %s", id), Status: http.StatusOK, Err: nil}
 }
 
-// PostFingerAssessment handles POST requests to /api/post-finger-assessment
 func PostFingerAssessment(w http.ResponseWriter, r *http.Request) {
-	// Check if the request method is POST
 	if r.Method != http.MethodPost {
-		returnHttpError(w, "Only POST requests are allowed", http.StatusMethodNotAllowed)
+		returnHTTPError(w, "Only POST requests are allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	iso8601Time := time.Now().Format(time.RFC3339)
 	filePath := fmt.Sprintf("data/%s.json", iso8601Time)
 
-	// Commiting new assessment JSON file
 	newAssessmentResponse := commitNewAssessmentJSON(r, filePath)
 
-	if newAssessmentResponse.err != nil {
-		returnHttpError(w, newAssessmentResponse.message, newAssessmentResponse.status)
+	if newAssessmentResponse.Err != nil {
+		returnHTTPError(w, newAssessmentResponse.Message, newAssessmentResponse.Status)
 		return
 	}
 
-	fmt.Println(newAssessmentResponse.message)
+	fmt.Println(newAssessmentResponse.Message)
 
-	// Commiting users JSON file
-	newUsersResponse := commitNewUsersJSON(iso8601Time, newAssessmentResponse.userId, filePath)
+	newUsersResponse := commitNewUsersJSON(iso8601Time, newAssessmentResponse.UserID, filePath)
 
-	if newUsersResponse.err != nil {
-		returnHttpError(w, newUsersResponse.message, newUsersResponse.status)
+	if newUsersResponse.Err != nil {
+		returnHTTPError(w, newUsersResponse.Message, newUsersResponse.Status)
 		return
 	}
 
-	fmt.Println(newUsersResponse.message)
+	fmt.Println(newUsersResponse.Message)
 
-	// Send a response
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("POST request received successfully"))
 }
