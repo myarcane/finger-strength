@@ -18,8 +18,18 @@ var upgrader = websocket.Upgrader{
 
 var cmd *exec.Cmd
 
+func killCmd(c *exec.Cmd) {
+	log.Println("Kill cmd", c)
+	if c != nil {
+		if err := c.Process.Kill(); err != nil {
+			log.Println("Failed to kill process: ", err)
+		}
+		c = nil
+	}
+}
+
 func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
-	log.Println("cmd to response")
+	log.Println("Starting load cell ws")
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -28,23 +38,22 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	go func(c *websocket.Conn) {
-		for {
-			if _, _, err := c.NextReader(); err != nil {
-				c.Close()
-				c = nil
-				log.Println("ws closed")
-				break
-			}
-		}
-	}(ws)
+	killCmd(cmd)
 
-	ws.WriteMessage(1, []byte("Starting...\n"))
-
-	killCmd()
+	ws.WriteMessage(1, []byte("Starting load cell ws...\n"))
 
 	log.Println("exec ./prog command")
 	cmd = exec.Command("./prog")
+
+	go func(c *websocket.Conn, cmd *exec.Cmd) {
+		for {
+			if _, _, err := c.NextReader(); err != nil {
+				c.Close()
+				killCmd(cmd)
+				break
+			}
+		}
+	}(ws, cmd)
 
 	// execute and get a pipe
 	stdout, err := cmd.StdoutPipe()
@@ -65,29 +74,15 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 
 	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
 	for s.Scan() {
-		if ws == nil {
-			killCmd()
-			break
-		} else {
-			log.Println("weight", string(s.Bytes()))
-			ws.WriteMessage(1, s.Bytes())
-		}
+		log.Println("weight", string(s.Bytes()))
+		ws.WriteMessage(1, s.Bytes())
 	}
 
 	if err := cmd.Wait(); err != nil {
-		killCmd()
+		killCmd(cmd)
 		log.Println(err)
 		return
 	}
 
-	ws.WriteMessage(1, []byte("Finished\n"))
-}
-
-func killCmd() {
-	if cmd != nil {
-		if err := cmd.Process.Kill(); err != nil {
-			log.Println("failed to kill process: ", err)
-		}
-		cmd = nil
-	}
+	ws.WriteMessage(1, []byte("Finished load cell ws...\n"))
 }

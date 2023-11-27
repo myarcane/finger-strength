@@ -43,16 +43,9 @@ export const useSensorData = ({
       console.log("Socket Error: ", error);
     };
 
-    const closeWebSocket = () => {
-      ws.current?.close();
-    };
-
-    window.addEventListener("unload", closeWebSocket);
-
     return () => {
       console.log("Cleaning up");
-      closeWebSocket();
-      window.removeEventListener("unload", closeWebSocket);
+      ws.current?.close();
     };
   }, []);
 
