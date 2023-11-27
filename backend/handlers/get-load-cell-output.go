@@ -33,6 +33,7 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 			if _, _, err := c.NextReader(); err != nil {
 				c.Close()
 				c = nil
+				log.Println("ws closed")
 				break
 			}
 		}
@@ -63,9 +64,14 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
-	for s.Scan() && ws != nil {
-		log.Println("weight", string(s.Bytes()))
-		ws.WriteMessage(1, s.Bytes())
+	for s.Scan() {
+		if ws == nil {
+			killCmd()
+			break
+		} else {
+			log.Println("weight", string(s.Bytes()))
+			ws.WriteMessage(1, s.Bytes())
+		}
 	}
 
 	if err := cmd.Wait(); err != nil {
