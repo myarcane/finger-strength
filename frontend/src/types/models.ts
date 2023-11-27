@@ -17,8 +17,10 @@ export type FingersStrengthAssesment = {
   bodyWeight: number;
 };
 
-export type FingersStrengthAssesmentProps = FingersStrengthAssesment &
-  SetStateFunction<FingersStrengthAssesment>;
+export type FingersStrengthAssesmentProps = {
+  fingersAssesment: FingersStrengthAssesment;
+  setFingersAssesment: SetStateFunction<FingersStrengthAssesment>;
+};
 
 export type SensorData = {
   id: string;
