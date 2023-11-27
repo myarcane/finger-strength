@@ -38,8 +38,6 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 		}
 	}(ws, killCmd)
 
-	ws.CloseHandler()
-
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
 	killCmd()
