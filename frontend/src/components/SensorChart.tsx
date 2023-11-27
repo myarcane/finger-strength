@@ -1,5 +1,10 @@
 import { FingersStrengthAssesment } from "../types/models";
 import { SetStateFunction } from "../types/utilities";
+import { TooltipProps } from "recharts";
+import {
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 import {
   LineChart,
@@ -26,6 +31,23 @@ export const SensorChart = ({
   const formatterX = (value: string) => `${parseInt(value) / 10}s`;
   const formatterBodyWeight = (value: string) =>
     `${Math.round((parseFloat(value) / fingersAssesment.bodyWeight) * 100)}%`;
+
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: TooltipProps<ValueType, NameType>) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white text-blue-600 py-2 px-4 border-2 border-gray-300">
+          <p>{`${payload[0].value} kg`}</p>
+          <p>{`${Math.round(
+            ((payload[0].value as number) / fingersAssesment.bodyWeight) * 100
+          )} % Body Weight`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   //Display the chart using rechart.js
   return (
@@ -62,7 +84,7 @@ export const SensorChart = ({
                 orientation="right"
               />
               {/* <Legend content={null} /> */}
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />} />
               <Line
                 yAxisId="left-axis"
                 type="monotone"
