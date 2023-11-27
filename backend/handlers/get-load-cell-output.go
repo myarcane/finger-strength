@@ -28,14 +28,14 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	go func(c *websocket.Conn, killCmd func()) {
+	go func(c *websocket.Conn, kill func()) {
 		for {
 			if _, _, err := c.NextReader(); err != nil {
 				c.Close()
-				killCmd()
 				break
 			}
 		}
+		kill()
 	}(ws, killCmd)
 
 	ws.WriteMessage(1, []byte("Starting...\n"))
