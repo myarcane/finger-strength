@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os/exec"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -30,29 +28,17 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	isOpen := true
-
 	go func(c *websocket.Conn) {
-		for isOpen {
+		for {
 			if _, _, err := c.NextReader(); err != nil {
 				c.Close()
+				killCmd()
 				break
 			}
 		}
 	}(ws)
 
-	var count int
-	for isOpen {
-		time.Sleep(time.Second)
-		err := ws.WriteMessage(1, []byte("Starting...\n"))
-		if err != nil {
-			isOpen = false
-			fmt.Println("Sender Closing", err)
-			break
-		}
-		fmt.Println("Sent", count)
-		count++
-	}
+	ws.CloseHandler()
 
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
