@@ -28,15 +28,15 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	go func(c *websocket.Conn, kill func()) {
+	go func(c *websocket.Conn) {
 		for {
 			if _, _, err := c.NextReader(); err != nil {
 				c.Close()
+				c = nil
 				break
 			}
 		}
-		kill()
-	}(ws, killCmd)
+	}(ws)
 
 	ws.WriteMessage(1, []byte("Starting...\n"))
 
@@ -63,7 +63,7 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
-	for s.Scan() {
+	for s.Scan() && ws != nil {
 		log.Println("weight", string(s.Bytes()))
 		ws.WriteMessage(1, s.Bytes())
 	}
