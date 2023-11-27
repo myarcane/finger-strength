@@ -1,6 +1,4 @@
-import { useEffect, useRef } from "react";
-import ReconnectingWebSocket from "reconnecting-websocket";
-import { FingersStrengthAssesment, SensorData } from "../types/models";
+import { FingersStrengthAssesment } from "../types/models";
 import { SetStateFunction } from "../types/utilities";
 
 import {
@@ -12,60 +10,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useSensorData } from "../hooks/useSensorData";
 
 export const SensorChart = ({
   fingersAssesment,
   setMenuVisibility,
-  sensorData,
-  setSensorData,
 }: {
   fingersAssesment: FingersStrengthAssesment;
   setMenuVisibility: SetStateFunction<boolean>;
-  sensorData: SensorData[];
-  setSensorData: SetStateFunction<SensorData[]>;
 }) => {
-  const ws = useRef<ReconnectingWebSocket>();
-
-  useEffect(() => {
-    console.log("render chart");
-    //Send request to our websocket server using the "/request" path
-    const host = import.meta.env.PROD
-      ? window.location.host
-      : "192.168.0.22:8000";
-
-    ws.current = new ReconnectingWebSocket(`ws://${host}/api/ws`);
-
-    ws.current.onmessage = (e: MessageEvent) => {
-      console.log("message event", e.data);
-      const weight = Math.round(
-        parseFloat((e.data as string).replace("kg", "").trim())
-      );
-
-      if (weight > 0) {
-        setSensorData((prevData) => {
-          return [
-            ...prevData,
-            {
-              id: Date.now().toString(),
-              weight,
-            },
-          ];
-        });
-      }
-    };
-    ws.current.onclose = () => {
-      console.log("Client socket close!");
-    };
-
-    ws.current.onerror = (error) => {
-      console.log("Socket Error: ", error);
-    };
-
-    return () => {
-      console.log("Cleaning up!");
-      ws.current?.close();
-    };
-  }, []);
+  const { sensorData, setSensorData } = useSensorData({ fingersAssesment });
 
   const formatterY = (value: string) =>
     `${value}${fingersAssesment.bodyWeightUnits}`;

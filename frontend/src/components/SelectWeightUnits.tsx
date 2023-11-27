@@ -1,13 +1,9 @@
-import { FingersStrengthAssesment } from "../types/models";
-import { SetStateFunction } from "../types/utilities";
+import { FingersStrengthAssesmentProps } from "../types/models";
 
 export const SelectWeightUnits = ({
   fingersAssesment,
   setFingersAssesment,
-}: {
-  fingersAssesment: FingersStrengthAssesment;
-  setFingersAssesment: SetStateFunction<FingersStrengthAssesment>;
-}) => {
+}: FingersStrengthAssesmentProps) => {
   return (
     <li>
       <div className="flex items-center w-full p-2 text-base text-white rounded-lg group">

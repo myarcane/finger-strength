@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { FingersStrengthAssesment } from "../types/models";
-import { SetStateFunction } from "../types/utilities";
+import { FingersStrengthAssesmentProps } from "../types/models";
 
 export const SelectGripType = ({
   fingersAssesment,
   setFingersAssesment,
-}: {
-  fingersAssesment: FingersStrengthAssesment;
-  setFingersAssesment: SetStateFunction<FingersStrengthAssesment>;
-}) => {
+}: FingersStrengthAssesmentProps) => {
   const [isGripTypeMenuVisible, setGripTypeMenuVisibility] = useState(false);
 
   const isFullCrimp = fingersAssesment.grip === "Full Crimp";

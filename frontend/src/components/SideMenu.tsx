@@ -1,23 +1,19 @@
-import type { FingersStrengthAssesment } from "../types/models";
+import { FingersStrengthAssesmentProps } from "../types/models";
 import { EnterBodyWeight } from "./EnterBodyWeight";
 import { SelectAssesment } from "./SelectAssesment";
 import { SelectGripType } from "./SelectGripType";
 import { SelectHand } from "./SelectHand";
 import { SelectWeightUnits } from "./SelectWeightUnits";
 import { SetStateFunction } from "../types/utilities";
-import type { SensorData } from "../types/models";
 
 export const SideMenu = ({
   fingersAssesment,
   setFingersAssesment,
   isMenuVisible,
   setMenuVisibility,
-}: {
-  fingersAssesment: FingersStrengthAssesment;
-  setFingersAssesment: SetStateFunction<FingersStrengthAssesment>;
+}: FingersStrengthAssesmentProps & {
   isMenuVisible: boolean;
   setMenuVisibility: SetStateFunction<boolean>;
-  setSensorData: SetStateFunction<SensorData[]>;
 }) => {
   return (
     <>

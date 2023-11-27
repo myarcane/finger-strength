@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { FingersStrengthAssesment } from "../types/models";
-import { SetStateFunction } from "../types/utilities";
+import { FingersStrengthAssesmentProps } from "../types/models";
 
 export const SelectAssesment = ({
   fingersAssesment,
   setFingersAssesment,
-}: {
-  fingersAssesment: FingersStrengthAssesment;
-  setFingersAssesment: SetStateFunction<FingersStrengthAssesment>;
-}) => {
+}: FingersStrengthAssesmentProps) => {
   const [isAssesmentsMenuVisible, setAssesmentMenuVisibility] = useState(false);
   const isMaxFingerStrength = fingersAssesment.type === "Max Finger Strength";
 
