@@ -28,7 +28,7 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	go func(c *websocket.Conn) {
+	go func(c *websocket.Conn, killCmd func()) {
 		for {
 			if _, _, err := c.NextReader(); err != nil {
 				c.Close()
@@ -36,7 +36,7 @@ func GetLoadCellOutput(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 		}
-	}(ws)
+	}(ws, killCmd)
 
 	ws.CloseHandler()
 
