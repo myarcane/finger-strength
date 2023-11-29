@@ -1,17 +1,15 @@
 package models
 
 type FingerAssessment struct {
-	Date              string `json:"date"`
-	User              string `json:"user"`
-	Test              string `json:"test"`
-	Hand              string `json:"hand"`
-	GripType          string `json:"gripType"`
-	UserUnit          string `json:"userUnit"`
-	UserWeight        string `json:"userWeight"`
-	MaxFingerStrength int    `json:"maxFingerStrength"`
-	AvgFingerStrength int    `json:"avgFingerStrength"`
-	Plot              []struct {
-		Weight int `json:"weight"`
-		Time   int `json:"time"`
+	User           string  `json:"user"`
+	Test           string  `json:"test"`
+	Hand           string  `json:"hand"`
+	Grip           string  `json:"grip"`
+	BodyWeightUnit string  `json:"bodyWeightUnit"`
+	BodyWeight     int     `json:"bodyWeight"`
+	MaxMVC         float64 `json:"maxMVC"`
+	Plot           []struct {
+		Weight float64 `json:"weight"`
+		Id     string  `json:"id"`
 	} `json:"plot"`
 }

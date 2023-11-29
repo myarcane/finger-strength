@@ -14,8 +14,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { useSensorData } from "../hooks/useSensorData";
+import { postJSONAssessment } from "../api/api";
 
 export const SensorChart = ({
   fingersAssesment,
@@ -24,10 +26,10 @@ export const SensorChart = ({
   fingersAssesment: FingersStrengthAssesment;
   setMenuVisibility: SetStateFunction<boolean>;
 }) => {
-  const { sensorData, setSensorData } = useSensorData({ fingersAssesment });
+  const { sensorData, setSensorData } = useSensorData(fingersAssesment);
 
   const formatterY = (value: string) =>
-    `${value}${fingersAssesment.bodyWeightUnits}`;
+    `${value}${fingersAssesment.bodyWeightUnit}`;
   const formatterX = (value: string) => `${parseInt(value) / 10}s`;
   const formatterBodyWeight = (value: string) =>
     `${Math.round((parseFloat(value) / fingersAssesment.bodyWeight) * 100)}%`;
@@ -39,10 +41,10 @@ export const SensorChart = ({
     if (active && payload && payload.length) {
       return (
         <div className="bg-white text-blue-600 py-2 px-4 border-2 border-gray-300">
-          <p>{`${payload[0].value} kg`}</p>
+          <p>{`${payload[0].value}${fingersAssesment.bodyWeightUnit}`}</p>
           <p>{`${Math.round(
             ((payload[0].value as number) / fingersAssesment.bodyWeight) * 100
-          )} % Body Weight`}</p>
+          )}% Body Weight`}</p>
         </div>
       );
     }
@@ -62,12 +64,12 @@ export const SensorChart = ({
         <h1 className="py-2">
           {`${fingersAssesment.type} - ${fingersAssesment.grip} - ${fingersAssesment.hand}`}
         </h1>
-        <main className="h-3/4 w-full mt-2">
+        <main className="h-3/4 w-3/4 mt-2">
           <ResponsiveContainer>
             <LineChart
               width={800}
               height={400}
-              data={sensorData}
+              data={sensorData.plot}
               margin={{
                 top: 0,
                 right: 0,
@@ -77,21 +79,41 @@ export const SensorChart = ({
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis tickFormatter={formatterX} />
-              <YAxis yAxisId="left-axis" tickFormatter={formatterY} />
+              <YAxis
+                yAxisId="left-axis"
+                tickFormatter={formatterY}
+                domain={[
+                  0,
+                  fingersAssesment.bodyWeightUnit === "lb" ? 176 : 80,
+                ]}
+              />
               <YAxis
                 yAxisId="right-axis"
                 tickFormatter={formatterBodyWeight}
                 orientation="right"
+                domain={[
+                  0,
+                  fingersAssesment.bodyWeightUnit === "lb" ? 176 : 80,
+                ]}
               />
               {/* <Legend content={null} /> */}
               <Tooltip content={<CustomTooltip />} />
+
+              {sensorData.maxMVC > 0 ? (
+                <ReferenceLine
+                  y={sensorData.maxMVC}
+                  yAxisId="right-axis"
+                  label={`Max ${sensorData.maxMVC} ${fingersAssesment.bodyWeightUnit}`}
+                  stroke="red"
+                />
+              ) : null}
               <Line
                 yAxisId="left-axis"
                 type="monotone"
                 dataKey="weight"
                 stroke="#8884d8"
-                activeDot={{ r: 24 }}
-                strokeWidth="4"
+                activeDot={{ r: 8 }}
+                strokeWidth="2"
               />
               <Line
                 yAxisId="right-axis"
@@ -99,8 +121,8 @@ export const SensorChart = ({
                 dataKey="weight"
                 label=""
                 stroke="#8884d8"
-                activeDot={{ r: 24 }}
-                strokeWidth="4"
+                activeDot={{ r: 8 }}
+                strokeWidth="1"
               />
               {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
             </LineChart>
@@ -110,12 +132,26 @@ export const SensorChart = ({
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded disabled:opacity-50"
             onClick={() => {
-              setSensorData([]);
+              setSensorData({
+                maxMVC: 0,
+                plot: [],
+              });
             }}
           >
             clear
           </button>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded disabled:opacity-50">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded disabled:opacity-50"
+            onClick={() => {
+              const data = {
+                ...fingersAssesment,
+                ...sensorData,
+                user: btoa("fmailliet@gmail.com"),
+              };
+
+              postJSONAssessment(data);
+            }}
+          >
             save
           </button>
         </div>

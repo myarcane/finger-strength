@@ -9,11 +9,16 @@ type GripType =
   | "Four Finger Drag";
 type BodyWeightUnitType = "kg" | "lb";
 
+type PlotData = {
+  id: string;
+  weight: number;
+};
+
 export type FingersStrengthAssesment = {
   type: AssesmentType;
   hand: HandType;
   grip: GripType;
-  bodyWeightUnits: BodyWeightUnitType;
+  bodyWeightUnit: BodyWeightUnitType;
   bodyWeight: number;
 };
 
@@ -23,6 +28,6 @@ export type FingersStrengthAssesmentProps = {
 };
 
 export type SensorData = {
-  id: string;
-  weight: number;
+  maxMVC: number;
+  plot: PlotData[];
 };

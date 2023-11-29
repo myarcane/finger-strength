@@ -10,10 +10,10 @@ function App() {
       hand: "Right Hand",
       grip: "Half Crimp",
       bodyWeight: 70,
-      bodyWeightUnits: "kg",
+      bodyWeightUnit: "kg",
     });
 
-  const [isMenuVisible, setMenuVisibility] = useState(true);
+  const [isMenuVisible, setMenuVisibility] = useState(false);
 
   return (
     <>

@@ -19,7 +19,9 @@ export const SelectHand = ({
             type="checkbox"
             value=""
             name="default-radio"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+            className={`pointer-events-${
+              fingersAssesment.hand === "Left Hand" ? "none" : "auto"
+            }w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2`}
             onClick={() => {
               setFingersAssesment({ ...fingersAssesment, hand: "Left Hand" });
             }}
@@ -38,7 +40,9 @@ export const SelectHand = ({
             type="checkbox"
             value=""
             name="default-radio"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+            className={`pointer-events-${
+              fingersAssesment.hand === "Right Hand" ? "none" : "auto"
+            }w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2`}
             onClick={() => {
               setFingersAssesment({ ...fingersAssesment, hand: "Right Hand" });
             }}

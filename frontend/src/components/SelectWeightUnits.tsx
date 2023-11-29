@@ -14,16 +14,19 @@ export const SelectWeightUnits = ({
       <ul className="mt-2 list-none flex font-medium">
         <li className="inline-block mr-10 ml-10">
           <input
-            checked={fingersAssesment.bodyWeightUnits === "lb"}
+            checked={fingersAssesment.bodyWeightUnit === "lb"}
             id="default-radio-1"
             type="checkbox"
             value=""
             name="default-radio"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+            className={`pointer-events-${
+              fingersAssesment.bodyWeightUnit === "lb" ? "none" : "auto"
+            } w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2`}
             onClick={() => {
               setFingersAssesment({
                 ...fingersAssesment,
-                bodyWeightUnits: "lb",
+                bodyWeight: Math.round(fingersAssesment.bodyWeight * 2.20462),
+                bodyWeightUnit: "lb",
               });
             }}
           />
@@ -36,16 +39,19 @@ export const SelectWeightUnits = ({
         </li>
         <li className="inline-block">
           <input
-            checked={fingersAssesment.bodyWeightUnits === "kg"}
+            checked={fingersAssesment.bodyWeightUnit === "kg"}
             id="default-radio-2"
             type="checkbox"
             value=""
             name="default-radio"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+            className={`pointer-events-${
+              fingersAssesment.bodyWeightUnit === "kg" ? "none" : "auto"
+            } w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2`}
             onClick={() => {
               setFingersAssesment({
                 ...fingersAssesment,
-                bodyWeightUnits: "kg",
+                bodyWeight: Math.round(fingersAssesment.bodyWeight / 2.20462),
+                bodyWeightUnit: "kg",
               });
             }}
           />
