@@ -44,7 +44,7 @@ export const EnterBodyWeight = ({
           }}
         />
         <span className="text-white ml-3">
-          {fingersAssesment.bodyWeightUnits}
+          {fingersAssesment.bodyWeightUnit}
         </span>
       </div>
     </li>
