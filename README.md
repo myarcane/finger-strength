@@ -2,14 +2,14 @@
 
 This project is still a **work in progress**
 
-I've been a climber since 2015, and I've always aimed to "scientifically" measure my grip strength. With this project, I'm endeavoring to create something akin to the Lattice training [digital rung](https://latticetraining.com/2019/07/05/lattice-digital-research-rung-qa/). You can watch this [video](https://www.youtube.com/watch?v=eopeSRfhrMQ) by Lattice Training where they test the grip strength of professional climber Stefano Ghisolfi using the digital rung.
+I've been a **climber since 2015**, and I've always aimed to "scientifically" measure my grip strength. With this project, I'm endeavoring to create something akin to the Lattice training [digital rung](https://latticetraining.com/2019/07/05/lattice-digital-research-rung-qa/). You can watch this [video](https://www.youtube.com/watch?v=eopeSRfhrMQ) by Lattice Training where they test the grip strength of professional climber Stefano Ghisolfi using the digital rung.
 
-At the moment, my software only measures maximum voluntary contraction, but I may incorporate critical force assessment in the future. Here are some pictures of my homemade version of the digital rung.
+At the moment, my software only measures **maximum voluntary contraction**, but I may incorporate **critical force** assessment in the future. Here are some pictures of my homemade version of the digital rung.
 
-![IMG_7466](https://github.com/myarcane/finger-strength/assets/1671293/729a9078-e4cc-453e-8fd9-9689b0f8ee32)
-![IMG_7468 (1)](https://github.com/myarcane/finger-strength/assets/1671293/c314a6b6-210e-4053-8dc4-cf4abaca06e5)
+<img src="https://github.com/myarcane/finger-strength/assets/1671293/c314a6b6-210e-4053-8dc4-cf4abaca06e5" width="35%" height="35%" />
 
 I will share more pictures about this project and especially pictures of the software.
+I will also share more details on how to do the setup.
 
 ## Inspiration
 
