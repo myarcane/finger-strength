@@ -6,7 +6,7 @@ export const wsSensorUrl = `ws://${host}/api/ws`;
 
 export const postJSONAssessment = async (
   data: { user: String } & FingersStrengthAssesment & SensorData
-) => {
+): Promise<{ status: "success" | "error"; error?: Error }> => {
   try {
     const response = await fetch(`http://${host}/api/post-finger-assessment`, {
       method: "POST",
@@ -17,8 +17,10 @@ export const postJSONAssessment = async (
     });
 
     const result = await response;
-    console.log("Success:", result);
+    console.log(result);
+    return { status: "success" };
   } catch (error) {
-    console.error("Error:", error);
+    console.error(error);
+    return { status: "error", error: error as Error };
   }
 };

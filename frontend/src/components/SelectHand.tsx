@@ -25,6 +25,7 @@ export const SelectHand = ({
             onClick={() => {
               setFingersAssesment({ ...fingersAssesment, hand: "Left Hand" });
             }}
+            onChange={() => {}}
           />
           <label
             htmlFor="default-radio-1"
@@ -46,6 +47,7 @@ export const SelectHand = ({
             onClick={() => {
               setFingersAssesment({ ...fingersAssesment, hand: "Right Hand" });
             }}
+            onChange={() => {}}
           />
           <label
             htmlFor="default-radio-2"

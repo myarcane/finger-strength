@@ -29,6 +29,7 @@ export const SelectWeightUnits = ({
                 bodyWeightUnit: "lb",
               });
             }}
+            onChange={() => {}}
           />
           <label
             htmlFor="default-radio-1"
@@ -54,6 +55,7 @@ export const SelectWeightUnits = ({
                 bodyWeightUnit: "kg",
               });
             }}
+            onChange={() => {}}
           />
           <label
             htmlFor="default-radio-2"

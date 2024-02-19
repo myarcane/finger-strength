@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FingersStrengthAssesment } from "./types/models";
 import { SensorChart } from "./components/SensorChart";
 import { SideMenu } from "./components/SideMenu";
+import { Modal } from "./components/Modal";
+import { useSensorData } from "./hooks/useSensorData";
 
 function App() {
   const [fingersAssesment, setFingersAssesment] =
@@ -14,6 +16,9 @@ function App() {
     });
 
   const [isMenuVisible, setMenuVisibility] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { sensorData, setSensorData } = useSensorData(fingersAssesment);
 
   return (
     <>
@@ -26,6 +31,15 @@ function App() {
       <SensorChart
         fingersAssesment={fingersAssesment}
         setMenuVisibility={setMenuVisibility}
+        setIsModalOpen={setIsModalOpen}
+        setSensorData={setSensorData}
+        sensorData={sensorData}
+      />
+      <Modal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        sensorData={sensorData}
+        fingersAssesment={fingersAssesment}
       />
     </>
   );

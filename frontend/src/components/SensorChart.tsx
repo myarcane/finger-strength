@@ -1,4 +1,4 @@
-import { FingersStrengthAssesment } from "../types/models";
+import { FingersStrengthAssesment, SensorData } from "../types/models";
 import { SetStateFunction } from "../types/utilities";
 import { TooltipProps } from "recharts";
 import {
@@ -16,18 +16,20 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
-import { useSensorData } from "../hooks/useSensorData";
-import { postJSONAssessment } from "../api/api";
 
 export const SensorChart = ({
   fingersAssesment,
+  sensorData,
   setMenuVisibility,
+  setIsModalOpen,
+  setSensorData,
 }: {
   fingersAssesment: FingersStrengthAssesment;
+  sensorData: SensorData;
   setMenuVisibility: SetStateFunction<boolean>;
+  setIsModalOpen: SetStateFunction<boolean>;
+  setSensorData: SetStateFunction<SensorData>;
 }) => {
-  const { sensorData, setSensorData } = useSensorData(fingersAssesment);
-
   const formatterY = (value: string) =>
     `${value}${fingersAssesment.bodyWeightUnit}`;
   const formatterX = (value: string) => `${parseInt(value) / 10}s`;
@@ -124,13 +126,14 @@ export const SensorChart = ({
                 activeDot={{ r: 8 }}
                 strokeWidth="1"
               />
-              {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
             </LineChart>
           </ResponsiveContainer>
         </main>
         <div className="flex justify-end gap-x-10 w-full px-20">
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded disabled:opacity-50"
+            className={`${
+              sensorData.plot.length ? "" : "pointer-events-none opacity-40"
+            } bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded opacity-50`}
             onClick={() => {
               setSensorData({
                 maxMVC: 0,
@@ -141,15 +144,11 @@ export const SensorChart = ({
             clear
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded disabled:opacity-50"
+            className={`${
+              sensorData.plot.length ? "" : "pointer-events-none opacity-40"
+            } bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 border border-blue-700 rounded`}
             onClick={() => {
-              const data = {
-                ...fingersAssesment,
-                ...sensorData,
-                user: btoa("fmailliet@gmail.com"),
-              };
-
-              postJSONAssessment(data);
+              setIsModalOpen(true);
             }}
           >
             save
