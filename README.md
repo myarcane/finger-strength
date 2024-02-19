@@ -1,8 +1,25 @@
-# @myarcane/hx711-service
+# finger-strength 
 
-A websocket service written in GO exposing weight outputs of hx711 load cell amplifier.
+This project is still a **work in progress**
 
-## Hardware
+I've been a climber since 2015, and I've always aimed to "scientifically" measure my grip strength. With this project, I'm endeavoring to create something akin to the Lattice training [digital rung](https://latticetraining.com/2019/07/05/lattice-digital-research-rung-qa/). You can watch this [video](https://www.youtube.com/watch?v=eopeSRfhrMQ) by Lattice Training where they test the grip strength of professional climber Stefano Ghisolfi using the digital rung.
+
+At the moment, my software only measures maximum voluntary contraction, but I may incorporate critical force assessment in the future. Here are some pictures of my homemade version of the digital rung.
+
+![IMG_7466](https://github.com/myarcane/finger-strength/assets/1671293/729a9078-e4cc-453e-8fd9-9689b0f8ee32)
+![IMG_7468 (1)](https://github.com/myarcane/finger-strength/assets/1671293/c314a6b6-210e-4053-8dc4-cf4abaca06e5)
+
+I will share more pictures about this project and especially pictures of the software.
+
+## Inspiration
+
+I got inspired by the [work done by Phillip Bulling](https://philaudio.wordpress.com/projects/climbing/) in Python.
+My setup is different tho, I use a hx711 load cell and a Raspberry pi 3. My software uses web technologies:
+
+ - TypeScript and React for the frontend
+ - Go for the backend
+
+## Hardware setup
 <img src="https://github.com/myarcane/hx711-service/assets/1671293/113b589c-7e12-451d-b6d1-01a76092b357" width="50%" height="50%" />
 
 
@@ -24,19 +41,3 @@ A websocket service written in GO exposing weight outputs of hx711 load cell amp
 ### Main dependency
 
 This service uses the [Raspberry Pi HX711 C++](https://github.com/endail/hx711) library to access the weight outputs of a hx711 loadcell.
-
-### Install
-
-```console
-pi@raspberrypi:~ $ git clone git@github.com:myarcane/hx711-service.git
-pi@raspberrypi:~ $ cd hx711-service
-pi@raspberrypi:~ $ sh install.sh
-```
-
-You might have to `export LD_LIBRARY_PATH=/usr/local/lib` to properly run the C++ Raspberry Pi HX711 library from the GO program
-
-### Run the websocket service
-
-```console
-pi@raspberrypi:~ $ go run main.go
-```
