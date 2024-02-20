@@ -13,7 +13,7 @@ I will also share more details on how to do the setup.
 
 ## Inspiration
 
-I got inspired by the [work done by Phillip Bulling](https://philaudio.wordpress.com/projects/climbing/) in Python.
+I got inspired by the awesome [work done by Phillip Bulling](https://philaudio.wordpress.com/projects/climbing/) in Python.
 My setup is different tho, I use a hx711 load cell and a Raspberry pi 3. My software uses web technologies:
 
  - TypeScript and React for the frontend
